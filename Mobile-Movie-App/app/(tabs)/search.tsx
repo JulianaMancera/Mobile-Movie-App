@@ -31,7 +31,7 @@ const search = () => {
           await updateSearchCount(searchQuery, movies[0]);
         }
       } else {
-          reset()
+         
       }
 
     }, 500);
