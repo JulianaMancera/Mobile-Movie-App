@@ -20,16 +20,21 @@ const search = () => {
           query: searchQuery
     }), false)
 
-    useEffect(() => {
-    const func = setTimeout(async () => {
+      useEffect(() => {
+    const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
-      } else {
-        reset()
-      }
-    }
-    func();
 
+        // Call updateSearchCount only if there are results
+        if (movies?.length! > 0 && movies?.[0]) {
+          await updateSearchCount(searchQuery, movies[0]);
+        }
+      } else {
+        reset();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
   return (
@@ -71,17 +76,28 @@ const search = () => {
                     </Text>
                   )}
 
-                  {!loading && !error && searchQuery.trim() && movies?.length > 0
-                      && (
-                        <Text className="text-xl text-white font-bold">
-                          Search Results for{' '}
-                          <Text className="text-accent">
-                            {searchQuery}
-                          </Text>
-                        </Text>
-                      )}
-              </>
-            }
+                  {!loading &&
+              !error &&
+              searchQuery.trim() &&
+              movies?.length! > 0 && (
+                <Text className="text-xl text-white font-bold">
+                  Search Results for{" "}
+                  <Text className="text-accent">{searchQuery}</Text>
+                </Text>
+              )}
+          </>
+        }
+        ListEmptyComponent={
+          !loading && !error ? (
+            <View className="mt-10 px-5">
+              <Text className="text-center text-gray-500">
+                {searchQuery.trim()
+                  ? "No movies found"
+                  : "Start typing to search for movies"}
+              </Text>
+            </View>
+              ) : null
+            } 
           />
     </View>
   )
